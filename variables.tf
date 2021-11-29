@@ -49,9 +49,3 @@ variable "private_subnet_cidr_blocks" {
         "10.16.160.0/20"
     ]
 }
-
-
-
-
-
-
