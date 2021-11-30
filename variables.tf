@@ -42,10 +42,16 @@ variable "private_subnet_cidr_blocks" {
     type = list(string)
     default = [
         "10.16.16.0/20",
-        "10.16.80.0/20",
-        "10.16.144.0/20",
         "10.16.32.0/20",
+        "10.16.80.0/20",
         "10.16.96.0/20",
+        "10.16.144.0/20",
         "10.16.160.0/20"
     ]
+}
+
+variable "ec2_keypair" {
+    type = string
+    default = "homelab2022"
+  
 }

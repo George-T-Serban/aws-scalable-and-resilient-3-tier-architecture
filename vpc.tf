@@ -16,5 +16,4 @@ create_igw = true
 manage_default_route_table = true 
 enable_vpn_gateway = false
 
-
 }
