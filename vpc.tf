@@ -8,6 +8,7 @@ cidr = var.vpc_cidr
 azs = var.vpc_azs
 private_subnets = var.private_subnet_cidr_blocks
 public_subnets = var.public_subnet_cidr_blocks
+database_subnets = var.db_subnets
 
 enable_nat_gateway = true
 single_nat_gateway = true
