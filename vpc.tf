@@ -1,3 +1,5 @@
+# Create VPC in 3 AZs
+# Create 3 public subnets, 3 private subnets, 3 database subnets in 3 AZs
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.11.0"

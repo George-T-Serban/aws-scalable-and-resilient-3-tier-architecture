@@ -54,6 +54,6 @@ variable "db_subnets" {
 
 variable "ec2_keypair" {
     type = string
-    default = "homelab2022"
+    default = "mykeypair"
   
 }

@@ -1,8 +1,22 @@
+# Get database credentials from AWS SSM Parameter Store
+# name = "aws ssm parameter name"
 
-data "aws_ssm_parameter" "dbpass" {
+# Database password
+data "aws_ssm_parameter" "dbpassword" {
     name = "DBPassword"
 }
 
+# Database user name
+data "aws_ssm_parameter" "dbuser" {
+    name = "DBUser"
+}
+
+# Database name
+data "aws_ssm_parameter" "dbname" {
+    name = "DBName"
+}
+
+# Create database security group
 resource "aws_security_group" "db_sg" {
     name = "Database access from within VPC"
     description = "Database access from within VPC"
@@ -25,12 +39,12 @@ resource "aws_security_group" "db_sg" {
   }
 }
 
-
+# Create database
 module "db" {
   source  = "terraform-aws-modules/rds/aws"
   version = "3.4.1"
 
-identifier = "testdb"
+identifier = "wordpressdb"
 skip_final_snapshot = true
 deletion_protection = false
 
@@ -39,16 +53,18 @@ engine_version = "5.7.34"
 family = "mysql5.7"
 major_engine_version = "5.7"
 instance_class = "db.m5.large"
-allocated_storage = 5
 
-name = "wordpressdb"
-username = "george"
-password = data.aws_ssm_parameter.dbpass.value
+# Allocated storage in GB
+allocated_storage = 5  
+
+name = data.aws_ssm_parameter.dbname.value
+username = data.aws_ssm_parameter.dbuser.value
+password = data.aws_ssm_parameter.dbpassword.value
 port = "3306"
 
 multi_az = true
+cross_region_replica = true
 subnet_ids = module.vpc.database_subnets
 vpc_security_group_ids = [aws_security_group.db_sg.id]
-
 
 }
