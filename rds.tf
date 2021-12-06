@@ -44,22 +44,23 @@ resource "aws_security_group" "db_sg" {
 }
 
 # Create database
+
 module "db" {
   source  = "terraform-aws-modules/rds/aws"
   version = "3.4.1"
 
-identifier = "wordpressdb"
+identifier = var.db_identifier
 skip_final_snapshot = true
 deletion_protection = false
 
-engine = "mysql"
-engine_version = "5.7.34"
-family = "mysql5.7"
-major_engine_version = "5.7"
-instance_class = "db.m5.large"
+engine = var.db_engine
+engine_version = var.db_engine_version
+family = var.db_family
+major_engine_version = var.major_engine_version
+instance_class = var.db_instance_class
 
 # Allocated storage in GB
-allocated_storage = 5  
+allocated_storage = var.storage 
 
 name = data.aws_ssm_parameter.dbname.value
 username = data.aws_ssm_parameter.dbuser.value

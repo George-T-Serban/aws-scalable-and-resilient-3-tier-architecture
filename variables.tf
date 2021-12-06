@@ -52,6 +52,50 @@ variable "db_subnets" {
     default = ["10.16.16.0/20", "10.16.32.0/20", "10.16.80.0/20"]
 }
 
+# Database variables
+
+variable "db_identifier" {
+    description = "Database identifier"
+    type = string
+    default = "wordpressdb"
+}
+variable "db_engine" {
+    description = "Database engine"
+    type = string
+    default = "mysql"
+}
+
+variable "db_engine_version" {
+    description = "Database engine version"
+    type = string
+    default = "5.7.34"
+}
+
+variable "db_family" {
+    description = "Database family"
+    type = string
+    default = "mysql5.7"
+}
+
+variable "major_engine_version" {
+    description = "Database major engine version"
+    type = string
+    default = "5.7"
+}
+
+variable "db_instance_class" {
+    description = "Database instance class"
+    type = string 
+    default = "db.m5.large"
+}
+
+variable "storage" {
+    description = "Database allocated storage"
+    type = string
+    default = "5"
+}
+
+# EC2 wordpress app variables
 variable "instance_type" {
     description = "EC2 instance type"
     type = string
