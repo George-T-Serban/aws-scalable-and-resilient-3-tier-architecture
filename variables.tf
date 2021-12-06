@@ -52,8 +52,13 @@ variable "db_subnets" {
     default = ["10.16.16.0/20", "10.16.32.0/20", "10.16.80.0/20"]
 }
 
+variable "instance_type" {
+    description = "EC2 instance type"
+    type = string
+    default = "t2.micro"
+}
 variable "ec2_keypair" {
     type = string
-    default = "mykeypair"
+    default = "homelab2022"
   
 }

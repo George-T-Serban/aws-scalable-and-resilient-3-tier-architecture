@@ -6,6 +6,10 @@ data "aws_ssm_parameter" "dbpassword" {
     name = "DBPassword"
 }
 
+# Database root password
+data "aws_ssm_parameter" "dbrootpassword" {
+    name = DBRootPassword
+}
 # Database user name
 data "aws_ssm_parameter" "dbuser" {
     name = "DBUser"

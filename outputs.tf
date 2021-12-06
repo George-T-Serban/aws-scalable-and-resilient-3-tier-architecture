@@ -17,12 +17,12 @@ output "vpc_name" {
 #     value = module.vpc.database_subnets
 #} 
 
-output "db_instance_availability_zone" {
-    description = "DB instance availability zones"
-    value = module.db.db_instance_availability_zone
-}
+# output "db_instance_availability_zone" {
+#     description = "DB instance availability zones"
+#     value = module.db.db_instance_availability_zone
+# }
 
-output "db_instance_endpoint" {
-    description = "DB instance endpoint"
-    value = module.db.db_instance_endpoint
-}
+# output "db_instance_endpoint" {
+#     description = "DB instance endpoint"
+#     value = module.db.db_instance_endpoint
+# }
