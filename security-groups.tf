@@ -1,6 +1,6 @@
 resource "aws_security_group" "allow_ssh" {
-  name        = "allow ssh traffic"
-  description = "Allow ssh inbound traffic"
+  name        = "allow ssh"
+  description = "Allow ssh from any IP"
   vpc_id      = module.vpc.vpc_id
   
 
