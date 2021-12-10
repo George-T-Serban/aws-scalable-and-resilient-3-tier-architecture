@@ -68,7 +68,7 @@ variable "db_engine" {
 variable "db_engine_version" {
     description = "Database engine version"
     type = string
-    default = "5.7.34"
+    default = "5.7.31"
 }
 
 variable "db_family" {

@@ -2,8 +2,8 @@
 
 # Create security group to allow ssh
 resource "aws_security_group" "allow_ssh" {
-  name        = "allow ssh"
-  description = "Allow ssh from any IP"
+  name        = "allow ssh,HTTP,HTTPS"
+  description = "Allow ssh, HTTP,HTTPS from any IP"
   vpc_id      = module.vpc.vpc_id
   
 
@@ -14,6 +14,23 @@ resource "aws_security_group" "allow_ssh" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+    ingress {
+    description = "HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+    ingress {
+    description = "HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
 
   egress {
     from_port        = 0
@@ -37,7 +54,7 @@ data "aws_ami" "amazon-linux-2" {
 
 # Create launch template
 resource "aws_launch_template" "wordpress_launch_template" {
-    name = "wordpress_launch_template"    
+    name = "wordpress_launch_template"       
 
     image_id = data.aws_ami.amazon-linux-2.id
     instance_type = var.instance_type
@@ -54,5 +71,8 @@ resource "aws_launch_template" "wordpress_launch_template" {
     }
 
     user_data = filebase64("wp-install.sh")
+
+    depends_on = [module.db]    
+    
 
 }

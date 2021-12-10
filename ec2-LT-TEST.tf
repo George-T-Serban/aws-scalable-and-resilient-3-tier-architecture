@@ -8,10 +8,8 @@ resource "aws_instance" "amz-public-1" {
     version = "$Latest"
     }
 
-  provisioner "local-exec" {
-    command = "terraform output -raw vpc_name > test-outputs"
-  }
-  
+  depends_on = [module.db]
+    
   tags = {
     Name  = "public-1"
     "Env" = "prod"

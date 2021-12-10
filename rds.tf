@@ -8,7 +8,7 @@ data "aws_ssm_parameter" "dbpassword" {
 
 # Database root password
 data "aws_ssm_parameter" "dbrootpassword" {
-    name = DBRootPassword
+    name = "DBRootPassword"
 }
 # Database user name
 data "aws_ssm_parameter" "dbuser" {
