@@ -4,13 +4,25 @@ sudo yum -y update
 sudo yum -y upgrade
 
 # Install apache web server, wget, php 7.2 and stress
+# Install botcore: needed for EFS mounting
 sudo yum install -y httpd wget 
 sudo amazon-linux-extras install -y php7.2
 sudo amazon-linux-extras install epel -y
+sudo yum -y install amazon-efs-utils
+sudo pip3 install botocore
 sudo yum install stress -y
 
 # Enable apache to start at boot
 sudo systemctl enable httpd --now
+
+# Get the efs file system ID
+EFSID=$(aws efs --region us-east-1 describe-file-systems --query "FileSystems[*].FileSystemId" --output text)
+
+sudo mkdir -p /var/www/html/wp-content
+sudo chown -R ec2-user:apache /var/www/
+echo "$EFSID:/ /var/www/html/wp-content efs _netdev,tls,iam 0 0" | sudo tee -a /etc/fstab
+sudo mount -a -t efs defaults
+
 
 # Download and extract Wordpress
 sudo wget http://wordpress.org/latest.tar.gz -P /var/www/html
@@ -46,3 +58,6 @@ sudo chown -R ec2-user:apache /var/www
 sudo chmod 2775 /var/www
 sudo find /var/www -type d -exec chmod 2775 {} \;
 sudo find /var/www -type f -exec chmod 0664 {} \;
+
+
+sudo systemctl daemon-reload

@@ -67,8 +67,9 @@ username = data.aws_ssm_parameter.dbuser.value
 password = data.aws_ssm_parameter.dbpassword.value
 port = "3306"
 
-multi_az = true
+multi_az = false
 cross_region_replica = true
+availability_zone = module.vpc.azs[0]
 subnet_ids = module.vpc.database_subnets
 vpc_security_group_ids = [aws_security_group.db_sg.id]
 
