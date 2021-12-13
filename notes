@@ -1,37 +1,113 @@
-# Create the EFS security group
-resource "aws_security_group" "wp_efs_sg" {
-    name = "EFS access within VPC"
-    description = "EFS access within VPC"
-    vpc_id = module.vpc.vpc_id
+    network_interfaces {
+      delete_on_termination = true
+      subnet_id = module.vpc.public_subnets[2]
+      security_groups = [aws_security_group.allow_ssh.id]
+    }
 
-    ingress {
-    description = "NFS access within VPC"
-    from_port   = 2049
-    to_port     = 2049
-    protocol    = "tcp"
-    cidr_blocks = [module.vpc.vpc_cidr_block]
+
+# Copy the content to a temporary location and make a new empty folder
+cd /var/www/html
+sudo mv wp-content/ /tmp
+sudo mkdir wp-content
+
+
+# Copy the origin content data back in and fix permissions
+sudo mv /tmp/wp-content/* /var/www/html/wp-content/
+sudo chown -R ec2-user:apache /var/www/
+
+
+======================AUTO SCALING GROUP=========================
+resource "aws_autoscaling_group" "web" {
+  name = "${aws_launch_configuration.web.name}-asg"
+  min_size             = 1
+  desired_capacity     = 1
+  max_size             = 2
+  
+  health_check_type    = "ELB"
+  load_balancers = [
+    "${aws_elb.web_elb.id}"
+  ]
+launch_configuration = "${aws_launch_configuration.web.name}"
+enabled_metrics = [
+    "GroupMinSize",
+    "GroupMaxSize",
+    "GroupDesiredCapacity",
+    "GroupInServiceInstances",
+    "GroupTotalInstances"
+  ]
+metrics_granularity = "1Minute"
+vpc_zone_identifier  = [
+    "${aws_subnet.demosubnet.id}",
+    "${aws_subnet.demosubnet1.id}"
+  ]
+# Required to redeploy without an outage.
+  lifecycle {
+    create_before_destroy = true
   }
-
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = [module.vpc.vpc_cidr_block]
-    ipv6_cidr_blocks = ["::/0"]
+tag {
+    key                 = "Name"
+    value               = "web"
+    propagate_at_launch = true
   }
 }
 
-# Create the EFS file system
-resource "aws_efs_file_system" "efs_wp" {
-    creation_token = "efs-wp"
-    performance_mode = "generalPurpose"
-    throughput_mode = "bursting"
-    encrypted = false
+There will be a minimum of 1 instance to serve the traffic.
+There will be at max 2 instancess to serve the traffic.
+Auto Scaling Group will be launched with 1instance
+Auto Scaling Group will get information about instance availability from the ELB
+I have set up a collection for some Cloud Watch metrics to monitor the Auto Scaling Group state.
+Each instance launched from this Auto Scaling Group will have Name a tag set to web.
+
+
+
+======================AUTO SCALING POLICY====================
+resource "aws_autoscaling_policy" "web_policy_up" {
+  name = "web_policy_up"
+  scaling_adjustment = 1
+  adjustment_type = "ChangeInCapacity"
+  cooldown = 300
+  autoscaling_group_name = "${aws_autoscaling_group.web.name}"
+}
+resource "aws_cloudwatch_metric_alarm" "web_cpu_alarm_up" {
+  alarm_name = "web_cpu_alarm_up"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods = "2"
+  metric_name = "CPUUtilization"
+  namespace = "AWS/EC2"
+  period = "120"
+  statistic = "Average"
+  threshold = "70"
+dimensions = {
+    AutoScalingGroupName = "${aws_autoscaling_group.web.name}"
+  }
+alarm_description = "This metric monitor EC2 instance CPU utilization"
+  alarm_actions = [ "${aws_autoscaling_policy.web_policy_up.arn}" ]
+}
+resource "aws_autoscaling_policy" "web_policy_down" {
+  name = "web_policy_down"
+  scaling_adjustment = -1
+  adjustment_type = "ChangeInCapacity"
+  cooldown = 300
+  autoscaling_group_name = "${aws_autoscaling_group.web.name}"
+}
+resource "aws_cloudwatch_metric_alarm" "web_cpu_alarm_down" {
+  alarm_name = "web_cpu_alarm_down"
+  comparison_operator = "LessThanOrEqualToThreshold"
+  evaluation_periods = "2"
+  metric_name = "CPUUtilization"
+  namespace = "AWS/EC2"
+  period = "120"
+  statistic = "Average"
+  threshold = "30"
+dimensions = {
+    AutoScalingGroupName = "${aws_autoscaling_group.web.name}"
+  }
+alarm_description = "This metric monitor EC2 instance CPU utilization"
+  alarm_actions = [ "${aws_autoscaling_policy.web_policy_down.arn}" ]
 }
 
-# Create the mount target
-resource "aws_efs_mount_target" "wp_mnt_target" {
-    file_system_id = aws_efs_file_system.efs_wp.id
-    subnet_id = module.vpc.private_subnets
-    security_groups = [aws_security_group.wp_efs_sg.id]
-}
+
+aws_autoscaling_policy declares how AWS should change Auto Scaling Group instances count in when aws_cloudwatch_metric_alarm trigger.
+cooldown option will wait for 300 seconds before increasing Auto Scaling Group again.
+aws_cloudwatch_metric_alarm - CPU utilization of all instances in our Auto Scaling Group will be greater or equal threshold value
+which is 70% during 120 seconds.
