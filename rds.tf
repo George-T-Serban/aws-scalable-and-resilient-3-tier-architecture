@@ -3,30 +3,30 @@
 
 # Database password
 data "aws_ssm_parameter" "dbpassword" {
-    name = "DBPassword"
+  name = "DBPassword"
 }
 
 # Database root password
 data "aws_ssm_parameter" "dbrootpassword" {
-    name = "DBRootPassword"
+  name = "DBRootPassword"
 }
 # Database user name
 data "aws_ssm_parameter" "dbuser" {
-    name = "DBUser"
+  name = "DBUser"
 }
 
 # Database name
 data "aws_ssm_parameter" "dbname" {
-    name = "DBName"
+  name = "DBName"
 }
 
 # Create database security group
 resource "aws_security_group" "db_sg" {
-    name = "Database access from within VPC"
-    description = "Database access from within VPC"
-    vpc_id = module.vpc.vpc_id
+  name        = "Database access from within VPC"
+  description = "Database access from within VPC"
+  vpc_id      = module.vpc.vpc_id
 
-    ingress {
+  ingress {
     description = "Database access from within VPC"
     from_port   = 3306
     to_port     = 3306
@@ -49,28 +49,28 @@ module "db" {
   source  = "terraform-aws-modules/rds/aws"
   version = "3.4.1"
 
-identifier = var.db_identifier
-skip_final_snapshot = true
-deletion_protection = false
+  identifier          = var.db_identifier
+  skip_final_snapshot = true
+  deletion_protection = false
 
-engine = var.db_engine
-engine_version = var.db_engine_version
-family = var.db_family
-major_engine_version = var.major_engine_version
-instance_class = var.db_instance_class
+  engine               = var.db_engine
+  engine_version       = var.db_engine_version
+  family               = var.db_family
+  major_engine_version = var.major_engine_version
+  instance_class       = var.db_instance_class
 
-# Allocated storage in GB
-allocated_storage = var.storage 
+  # Allocated storage in GB
+  allocated_storage = var.storage
 
-name = data.aws_ssm_parameter.dbname.value
-username = data.aws_ssm_parameter.dbuser.value
-password = data.aws_ssm_parameter.dbpassword.value
-port = "3306"
+  name     = data.aws_ssm_parameter.dbname.value
+  username = data.aws_ssm_parameter.dbuser.value
+  password = data.aws_ssm_parameter.dbpassword.value
+  port     = "3306"
 
-multi_az = false
-cross_region_replica = true
-availability_zone = module.vpc.azs[0]
-subnet_ids = module.vpc.database_subnets
-vpc_security_group_ids = [aws_security_group.db_sg.id]
+  multi_az               = false
+  cross_region_replica   = true
+  availability_zone      = module.vpc.azs[0]
+  subnet_ids             = module.vpc.database_subnets
+  vpc_security_group_ids = [aws_security_group.db_sg.id]
 
 }

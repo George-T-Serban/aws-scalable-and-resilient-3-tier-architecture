@@ -5,7 +5,7 @@ resource "aws_security_group" "allow_ssh" {
   name        = "allow ssh,HTTP,HTTPS"
   description = "Allow ssh, HTTP,HTTPS from any IP"
   vpc_id      = module.vpc.vpc_id
-  
+
 
   ingress {
     description = "SSH"
@@ -15,7 +15,7 @@ resource "aws_security_group" "allow_ssh" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-    ingress {
+  ingress {
     description = "HTTP"
     from_port   = 80
     to_port     = 80
@@ -23,7 +23,7 @@ resource "aws_security_group" "allow_ssh" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-    ingress {
+  ingress {
     description = "HTTPS"
     from_port   = 443
     to_port     = 443
@@ -54,21 +54,27 @@ data "aws_ami" "amazon-linux-2" {
 
 # Create launch template
 resource "aws_launch_template" "wordpress_launch_template" {
-    name = "wordpress_launch_template"       
+  name = "wordpress_launch_template"
 
-    image_id = data.aws_ami.amazon-linux-2.id
-    instance_type = var.instance_type
-    key_name = var.ec2_keypair  
-    
-    iam_instance_profile {
-      arn = "arn:aws:iam::648826012845:instance-profile/terraform-wordpress-demo-EC2"
-    } 
+  image_id      = data.aws_ami.amazon-linux-2.id
+  instance_type = var.instance_type
+  key_name      = var.ec2_keypair
 
-    
-    user_data = filebase64("wp-install.sh")
+  network_interfaces {
+      delete_on_termination = true
+      subnet_id = module.vpc.private_subnets[0]
+      security_groups = [aws_security_group.allow_ssh.id]
+    }
 
-    depends_on = [module.db, aws_efs_file_system.efs_wp, aws_efs_mount_target.wp_mnt_target]
-        
-    
+  iam_instance_profile {
+    arn = "arn:aws:iam::648826012845:instance-profile/terraform-wordpress-demo-EC2"
+  }
+
+
+  user_data = filebase64("wp-install.sh")
+
+  depends_on = [module.db, aws_efs_file_system.efs_wp, aws_efs_mount_target.wp_mnt_target]
+
+
 
 }

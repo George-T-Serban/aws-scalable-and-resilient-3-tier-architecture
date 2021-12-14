@@ -5,8 +5,8 @@ resource "aws_security_group" "elb_sg" {
   name        = "Allow HTTP,HTTPS"
   description = "Allow HTTP,HTTPS"
   vpc_id      = module.vpc.vpc_id
-  
-    ingress {
+
+  ingress {
     description = "HTTP"
     from_port   = 80
     to_port     = 80
@@ -14,7 +14,7 @@ resource "aws_security_group" "elb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-    ingress {
+  ingress {
     description = "HTTPS"
     from_port   = 443
     to_port     = 443
@@ -38,9 +38,9 @@ module "elb" {
 
   name = "wordpress-elb"
 
-  subnets = module.vpc.public_subnets
+  subnets         = module.vpc.public_subnets
   security_groups = [aws_security_group.elb_sg.id]
-  internal = false
+  internal        = false
 
   listener = [
     {
@@ -58,7 +58,7 @@ module "elb" {
     unhealthy_threshold = 2
     timeout             = 5
   }
-  
+
   tags = {
     Owner       = "wordpress-ELB"
     Environment = "demo"
@@ -66,6 +66,6 @@ module "elb" {
 
   # ELB attachments
   number_of_instances = var.number_of_instances
-  instances = [aws_instance.wordpress_app.id]
+  instances           = [aws_instance.wordpress_app.id]
 
 }
