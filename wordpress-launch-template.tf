@@ -62,7 +62,7 @@ resource "aws_launch_template" "wordpress_launch_template" {
 
   network_interfaces {
       delete_on_termination = true
-      subnet_id = module.vpc.private_subnets[0]
+      subnet_id = module.vpc.public_subnets[0]
       security_groups = [aws_security_group.allow_ssh.id]
     }
 
@@ -73,7 +73,7 @@ resource "aws_launch_template" "wordpress_launch_template" {
 
   user_data = filebase64("wp-install.sh")
 
-  depends_on = [module.db, aws_efs_file_system.efs_wp, aws_efs_mount_target.wp_mnt_target]
+  depends_on = [module.db, aws_efs_file_system.efs_wp, aws_efs_mount_target.wp_mnt_target, aws_lb.wp_alb]
 
 
 

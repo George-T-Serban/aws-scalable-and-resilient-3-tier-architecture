@@ -70,7 +70,10 @@ module "db" {
   multi_az               = false
   cross_region_replica   = true
   availability_zone      = module.vpc.azs[0]
-  subnet_ids             = module.vpc.database_subnets
+  subnet_ids             = ["${module.vpc.public_subnets[0]}",
+                            "${module.vpc.public_subnets[1]}",
+                            "${module.vpc.public_subnets[2]}" 
+                           ]
   vpc_security_group_ids = [aws_security_group.db_sg.id]
 
 }
