@@ -44,7 +44,6 @@ resource "aws_security_group" "db_sg" {
 }
 
 # Create database
-
 module "db" {
   source  = "terraform-aws-modules/rds/aws"
   version = "3.4.1"

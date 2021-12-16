@@ -6,9 +6,9 @@ resource "aws_autoscaling_group" "wp_asg" {
 
   name = "wodpress-asg"
   vpc_zone_identifier = ["${module.vpc.public_subnets[0]}",
-    "${module.vpc.public_subnets[1]}",
-    "${module.vpc.public_subnets[2]}"
-  ]
+                         "${module.vpc.public_subnets[1]}",
+                         "${module.vpc.public_subnets[2]}"
+                        ]
 
   max_size                  = 3
   min_size                  = 1

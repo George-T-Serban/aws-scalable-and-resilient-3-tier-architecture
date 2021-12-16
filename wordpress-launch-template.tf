@@ -6,7 +6,6 @@ resource "aws_security_group" "lt_sg" {
   description = "Allow HTTP and HTTPS. SSH from within the VPC only"
   vpc_id      = module.vpc.vpc_id
 
-
   ingress {
     description = "SSH"
     from_port   = 22
@@ -30,7 +29,6 @@ resource "aws_security_group" "lt_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
 
   egress {
     from_port        = 0
@@ -69,7 +67,6 @@ resource "aws_launch_template" "wordpress_launch_template" {
   iam_instance_profile {
     arn = "arn:aws:iam::648826012845:instance-profile/terraform-wordpress-demo-EC2"
   }
-
 
   user_data = filebase64("wp-install.sh")
 
