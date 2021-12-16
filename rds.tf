@@ -69,9 +69,9 @@ module "db" {
 
   multi_az = true
   subnet_ids = ["${module.vpc.public_subnets[0]}",
-    "${module.vpc.public_subnets[1]}",
-    "${module.vpc.public_subnets[2]}"
-  ]
+                "${module.vpc.public_subnets[1]}",
+                "${module.vpc.public_subnets[2]}"
+               ]
   vpc_security_group_ids = [aws_security_group.db_sg.id]
 
 }
