@@ -1,18 +1,21 @@
-# Auto Scaling Group
+# Access the default tags configured for the workspace's provider.
+data "aws_default_tags" "current" {}
+
+# Create the Auto Scaling Group
 resource "aws_autoscaling_group" "wp_asg" {
 
-  name                = "wodpress-asg"
+  name = "wodpress-asg"
   vpc_zone_identifier = ["${module.vpc.public_subnets[0]}",
-                         "${module.vpc.public_subnets[1]}",
-                         "${module.vpc.public_subnets[2]}" 
-                        ]
+    "${module.vpc.public_subnets[1]}",
+    "${module.vpc.public_subnets[2]}"
+  ]
 
   max_size                  = 3
   min_size                  = 1
   health_check_grace_period = 300
   health_check_type         = "ELB"
   force_delete              = false
-  target_group_arns = ["${aws_lb_target_group.wp_alb_tg.arn}"]
+  target_group_arns         = ["${aws_lb_target_group.wp_alb_tg.arn}"]
 
   launch_template {
     id      = aws_launch_template.wordpress_launch_template.id
@@ -28,14 +31,19 @@ resource "aws_autoscaling_group" "wp_asg" {
     "GroupTotalInstances"
   ]
 
-  tag {
-    key                 = "Name"
-    value               = "wordpress-asg"
-    propagate_at_launch = true
+  # Dynamically generate a tag block for each item in the aws_default_tags data source.
+  dynamic "tag" {
+    for_each = data.aws_default_tags.current.tags
+    content {
+      key                 = tag.key
+      value               = tag.value
+      propagate_at_launch = true
+    }
   }
-
 }
 
+# Create the scale out policy.
+# Add one instance when CPU > 40%.
 resource "aws_autoscaling_policy" "wp_scale_out" {
   name                   = "wordpress-app-scale-out"
   scaling_adjustment     = 1
@@ -44,6 +52,8 @@ resource "aws_autoscaling_policy" "wp_scale_out" {
   autoscaling_group_name = aws_autoscaling_group.wp_asg.id
 }
 
+# Create the scale in policy.
+# Removes one instance when CPU < 40%.
 resource "aws_autoscaling_policy" "wp_scale_in" {
   name                   = "wordpress-app-scale-in"
   scaling_adjustment     = -1
@@ -51,6 +61,9 @@ resource "aws_autoscaling_policy" "wp_scale_in" {
   cooldown               = 300
   autoscaling_group_name = aws_autoscaling_group.wp_asg.id
 }
+
+# Create the scale out alarm.
+# Alarm is trigerred if CPU > 40%.
 
 resource "aws_cloudwatch_metric_alarm" "wp_scale_out_alarm" {
   alarm_name          = "CPU usage is above 40%"
@@ -61,12 +74,15 @@ resource "aws_cloudwatch_metric_alarm" "wp_scale_out_alarm" {
   period              = "120"
   statistic           = "Average"
   threshold           = "40"
-  alarm_description   = "This metric monitors ec2 cpu utilization"
+  alarm_description   = "This alarm is trigerred if CPU usage is above 40%"
   alarm_actions       = [aws_autoscaling_policy.wp_scale_out.arn]
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.wp_asg.id
   }
 }
+
+# Create the scale in alarm.
+# Alarm is trigerred if CPU < 40%.
 
 resource "aws_cloudwatch_metric_alarm" "wp_scale_in_alarm" {
   alarm_name          = "CPU usage is below 40%"
@@ -77,7 +93,7 @@ resource "aws_cloudwatch_metric_alarm" "wp_scale_in_alarm" {
   period              = "120"
   statistic           = "Average"
   threshold           = "40"
-  alarm_description   = "This metric monitors ec2 cpu utilization"
+  alarm_description   = "This alarm is trigerred if CPU usage is below 40%"
   alarm_actions       = [aws_autoscaling_policy.wp_scale_in.arn]
   dimensions = {
     AutoScalingGroupName = aws_autoscaling_group.wp_asg.id

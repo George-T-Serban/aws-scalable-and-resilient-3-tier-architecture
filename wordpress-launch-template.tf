@@ -1,9 +1,9 @@
 # This is the EC2 wordpress launch template
 
 # Create security group to allow ssh
-resource "aws_security_group" "allow_ssh" {
-  name        = "allow ssh,HTTP,HTTPS"
-  description = "Allow ssh, HTTP,HTTPS from any IP"
+resource "aws_security_group" "lt_sg" {
+  name        = "Allow ssh,HTTP,HTTPS"
+  description = "Allow HTTP and HTTPS. SSH from within the VPC only"
   vpc_id      = module.vpc.vpc_id
 
 
@@ -12,7 +12,7 @@ resource "aws_security_group" "allow_ssh" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [module.vpc.vpc_cidr_block]
   }
 
   ingress {
@@ -52,7 +52,7 @@ data "aws_ami" "amazon-linux-2" {
   owners = ["amazon"]
 }
 
-# Create launch template
+# Create the Launch Template.
 resource "aws_launch_template" "wordpress_launch_template" {
   name = "wordpress_launch_template"
 
@@ -61,10 +61,10 @@ resource "aws_launch_template" "wordpress_launch_template" {
   key_name      = var.ec2_keypair
 
   network_interfaces {
-      delete_on_termination = true
-      subnet_id = module.vpc.public_subnets[0]
-      security_groups = [aws_security_group.allow_ssh.id]
-    }
+    delete_on_termination = true
+    subnet_id             = module.vpc.public_subnets[0]
+    security_groups       = [aws_security_group.lt_sg.id]
+  }
 
   iam_instance_profile {
     arn = "arn:aws:iam::648826012845:instance-profile/terraform-wordpress-demo-EC2"

@@ -95,7 +95,6 @@ variable "storage" {
   default     = "5"
 }
 
-# EC2 wordpress app variables
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string

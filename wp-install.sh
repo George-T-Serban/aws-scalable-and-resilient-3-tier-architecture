@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Get the Load Balancer DNS Name
 ALBDNSNAME=$(aws elbv2 describe-load-balancers --query "LoadBalancers[*].DNSName" --output text)
 
 sudo yum -y update
