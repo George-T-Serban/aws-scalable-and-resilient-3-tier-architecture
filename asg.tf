@@ -1,6 +1,3 @@
-# Access the default tags configured for the workspace's provider.
-data "aws_default_tags" "current" {}
-
 # Create the Auto Scaling Group
 resource "aws_autoscaling_group" "wp_asg" {
 
@@ -30,15 +27,10 @@ resource "aws_autoscaling_group" "wp_asg" {
     "GroupInServiceInstances",
     "GroupTotalInstances"
   ]
-
-  # Dynamically generate a tag block for each item in the aws_default_tags data source.
-  dynamic "tag" {
-    for_each = data.aws_default_tags.current.tags
-    content {
-      key                 = tag.key
-      value               = tag.value
-      propagate_at_launch = true
-    }
+  tag {
+    key                 = "Name"
+    value               = "wp-asg-instance"
+    propagate_at_launch = true
   }
 }
 

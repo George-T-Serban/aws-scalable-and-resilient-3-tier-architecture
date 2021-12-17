@@ -102,7 +102,7 @@ variable "instance_type" {
 }
 variable "ec2_keypair" {
   type    = string
-  default = "homelab2022"
+  default = "insert keypair here"
 
 }
 
