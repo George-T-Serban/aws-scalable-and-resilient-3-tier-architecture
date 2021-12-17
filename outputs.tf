@@ -28,12 +28,12 @@ output "lb_arn" {
   value = aws_lb.wp_alb.arn
 }
 
-output "efs_id" {
+output "EFS_id" {
   description = "EFS ID"
   value = aws_efs_file_system.efs_wp.id
 }
 
-output "efs_nr_of_mount_targets" {
+output "EFS_nr_of_mount_targets" {
   description = "EFS Number of mount targets"
   value = aws_efs_file_system.efs_wp.number_of_mount_targets
 }
