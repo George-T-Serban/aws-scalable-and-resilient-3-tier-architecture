@@ -70,8 +70,8 @@ resource "aws_launch_template" "wordpress_launch_template" {
 
   user_data = filebase64("wp-install.sh")
 
-  depends_on = [module.db, aws_efs_file_system.efs_wp, aws_efs_mount_target.wp_mnt_target, aws_lb.wp_alb]
-
-
+  depends_on = [aws_rds_cluster.wp_cluster,aws_rds_cluster_instance.cluster_instances,
+                aws_efs_file_system.efs_wp, aws_efs_mount_target.wp_mnt_target, aws_lb.wp_alb
+               ]
 
 }

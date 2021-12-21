@@ -44,8 +44,8 @@ DBUser=$(aws ssm get-parameters --region us-east-1 --names DBUser --query Parame
 
 DBName=$(aws ssm get-parameters --region us-east-1 --names DBName --query Parameters[0].Value --output text)
 
-# Get database endpoint url
-DBEndpoint=$(aws rds --region us-east-1 describe-db-instances --query "DBInstances[*].Endpoint.Address" --output text)
+# Get Aurora writer endpoint url
+DBEndpoint=$(aws rds --region us-east-1 describe-db-cluster-endpoints --query "DBClusterEndpoints[0].Endpoint" --output text)
 
 
 # Configure the wordpress wp-config.php file

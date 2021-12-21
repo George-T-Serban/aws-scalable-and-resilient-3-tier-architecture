@@ -62,39 +62,22 @@ variable "db_identifier" {
 variable "db_engine" {
   description = "Database engine"
   type        = string
-  default     = "mysql"
+  default     = "aurora-mysql"
 }
 
 variable "db_engine_version" {
   description = "Database engine version"
   type        = string
-  default     = "5.7.31"
-}
-
-variable "db_family" {
-  description = "Database family"
-  type        = string
-  default     = "mysql5.7"
-}
-
-variable "major_engine_version" {
-  description = "Database major engine version"
-  type        = string
-  default     = "5.7"
+  default     = "5.7.12"
 }
 
 variable "db_instance_class" {
   description = "Database instance class"
   type        = string
-  default     = "db.m5.large"
+  default     = "db.t3.small"
 }
 
-variable "storage" {
-  description = "Database allocated storage"
-  type        = string
-  default     = "5"
-}
-
+# EC2 instances
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
@@ -102,7 +85,7 @@ variable "instance_type" {
 }
 variable "ec2_keypair" {
   type    = string
-  default = "insert keypair here"
+  default = "keypair here"
 
 }
 
