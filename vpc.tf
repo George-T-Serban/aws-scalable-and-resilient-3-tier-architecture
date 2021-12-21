@@ -13,8 +13,8 @@ module "vpc" {
   database_subnets = var.db_subnets
 
   enable_nat_gateway         = true
-  single_nat_gateway         = true
-  one_nat_gateway_per_az     = false
+  single_nat_gateway         = false
+  one_nat_gateway_per_az     = true
   create_igw                 = true
   manage_default_route_table = true
   enable_vpn_gateway         = false
