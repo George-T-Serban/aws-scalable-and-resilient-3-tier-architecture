@@ -8,14 +8,14 @@ output "vpc_AZs" {
   value = module.vpc.azs
 }
 
-output "db_instance_availability_zone" {
+output "db_cluster_availability_zone" {
   description = "DB instance availability zones"
-  value       = module.db.db_instance_availability_zone
+  value       = aws_rds_cluster.wp_cluster.availability_zones
 }
 
-output "db_instance_endpoint" {
+output "db_cluster_writer_endpoint" {
   description = "DB instance endpoint"
-  value       = module.db.db_instance_endpoint
+  value       = aws_rds_cluster.wp_cluster.endpoint
 }
 
 output "lb_dns_name" {
