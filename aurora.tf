@@ -73,7 +73,7 @@ resource "aws_rds_cluster" "wp_cluster" {
 }
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
-  count              = 2
+  count              = 3
   identifier         = "wp-aurora-${count.index}"
   cluster_identifier = aws_rds_cluster.wp_cluster.id
   instance_class     = var.db_instance_class
