@@ -1,6 +1,6 @@
 # This is the EC2 wordpress launch template
 
-# Create security group to allow ssh
+# Create security group to allow HTTP/HTTPS traffic and SSH from whithin the VPC only.
 resource "aws_security_group" "lt_sg" {
   name        = "Allow ssh,HTTP,HTTPS"
   description = "Allow HTTP and HTTPS. SSH from within the VPC only"
