@@ -1,6 +1,6 @@
 ## Automatic deployment of a scalable and resilient WordPress installation on AWS using Terraform.
 
-## Architecture ##
+### Architecture 
 * Aurora Cluster:
   * scalable and resilient MySQL Database that spans over three Availability Zones (AZs).
 * EFS (Elastic File system):
