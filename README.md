@@ -1,4 +1,4 @@
-# Automatic deployment of a scalable and resilient WordPress installation on AWS using Terraform.
+## Automatic deployment of a scalable and resilient WordPress installation on AWS using Terraform.
 
 ## Architecture ##
 * Aurora Cluster:
