@@ -16,3 +16,5 @@
   * automatically distributes incoming application traffic across multiple targets in three Availability Zones (AZs).
   * points at the Auto Scaling Group so the customer will connect via the Application Load Balancer instead of connecting to the instance directly.
   * it allows the system to be fully resilient, self-healing and fully elastically scalable.
+  
+![picture alt](https://github.com/George-T-Serban/aws-high-availability-wordpress/blob/main/aws-wordpress.png?raw=true)
