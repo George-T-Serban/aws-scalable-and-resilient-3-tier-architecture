@@ -9,7 +9,7 @@
   * provides automatic provisioning of the EC2 instances running the wordpress app.
   * specifies instance configuration information: ID of the Amazon Machine Image (AMI),the instance type,a key pair,security groups and user data script.
 * Auto Scaling Group:
-  * allows instances to scale out or in based on scaling policies,and performs health checks based on notifications that come from the Application Load Balancer.
+  * allows instances to scale out or in based on scaling policies and health checks notifications that come from the Application Load Balancer.
   * scales out when CPU > 40%
   * scales in when CPU < 40%
 * Application Load Balancer: 
