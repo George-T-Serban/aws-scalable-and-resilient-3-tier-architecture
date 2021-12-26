@@ -23,6 +23,8 @@ EFSID=$(aws efs --region us-east-1 describe-file-systems --query "FileSystems[*]
 
 sudo mkdir -p /var/www/html/wp-content
 sudo chown -R ec2-user:apache /var/www/
+
+# Mount the EFS file system
 echo "$EFSID:/ /var/www/html/wp-content efs _netdev,tls,iam 0 0" | sudo tee -a /etc/fstab
 sudo mount -a -t efs defaults
 
