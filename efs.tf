@@ -31,8 +31,8 @@ resource "aws_efs_file_system" "efs_wp" {
 
 # Create the mount target in 3 different subnets
 resource "aws_efs_mount_target" "wp_mnt_target" {
-  count           = length(module.vpc.public_subnets)
+  count           = length(module.vpc.private_subnets)
   file_system_id  = aws_efs_file_system.efs_wp.id
-  subnet_id       = module.vpc.public_subnets[count.index]
+  subnet_id       = module.vpc.private_subnets[count.index]
   security_groups = [aws_security_group.wp_efs_sg.id]
 }
