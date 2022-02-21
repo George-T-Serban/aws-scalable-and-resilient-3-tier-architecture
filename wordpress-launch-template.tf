@@ -65,7 +65,7 @@ resource "aws_launch_template" "wordpress_launch_template" {
   }
 
   iam_instance_profile {
-    arn = "arn:aws:iam::648826012845:instance-profile/terraform-wordpress-demo-EC2"
+    arn = "arn:aws:iam::"aws-account-id":instance-profile/terraform-wordpress-demo-EC2"
   }
 
   user_data = filebase64("wp-install.sh")
