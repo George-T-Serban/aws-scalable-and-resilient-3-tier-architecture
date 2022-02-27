@@ -63,7 +63,7 @@ resource "aws_launch_template" "wordpress_launch_template" {
     subnet_id             = module.vpc.public_subnets[0]
     security_groups       = [aws_security_group.lt_sg.id]
   }
-
+ # IAM Role to provide access to RDS
   iam_instance_profile {
     arn = "arn:aws:iam::"aws-account-id":instance-profile/terraform-wordpress-demo-EC2"
   }
